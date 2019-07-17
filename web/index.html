@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+  <script type="application/javascript">
+    var wechatConfig = {
+      appid: "ww558b222409b5625f",
+      agentid: "1000002",
+      redirect_uri: "/log_viewer_main.html"
+    };
+
+    var authUri =
+      "https://open.work.weixin.qq.com/wwopen/sso/qrConnect?" +
+      "appid=" +
+      encodeURIComponent(wechatConfig.appid) +
+      "&agentid=" +
+      encodeURIComponent(wechatConfig.agentid) +
+      "&redirect_uri=" +
+      encodeURIComponent(
+        location.protocol + "//" + location.hostname + wechatConfig.redirect_uri
+      );
+    location.href = authUri;
+  </script>
+</head>
+
+<body>
+</body>
+
+</html>

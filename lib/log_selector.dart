@@ -18,8 +18,9 @@ class _LogSelectorState extends State<LogSelector> {
   void _onChangedInternal(String newSelected) {
     setState(() {
       _selected = newSelected;
-      widget.onChanged(
-          _fileEntries.firstWhere((entry) => entry.filename == newSelected));
+      widget.onChanged(_selected != null
+          ? _fileEntries.firstWhere((entry) => entry.filename == newSelected)
+          : null);
     });
   }
 
@@ -32,10 +33,18 @@ class _LogSelectorState extends State<LogSelector> {
     });
   }
 
-  void _refresh() {
-    FileServiceProvider.fetchFileEntryList().then((fileList) {
+  Future<void> _refresh() {
+    return FileServiceProvider.fetchFileEntryList().then((fileList) {
       setState(() {
         _fileEntries = fileList;
+        String selected = _selected;
+        Iterable entryNames = _fileEntries.map((entry) => entry.filename);
+        _onChangedInternal(null);
+        if (!entryNames.contains(selected)) {
+          _onChangedInternal(entryNames.toList()[0]);
+        } else {
+          _onChangedInternal(selected);
+        }
       });
     });
   }
@@ -53,25 +62,22 @@ class _LogSelectorState extends State<LogSelector> {
           ],
         ),
         actionConfirm: "添加",
-        onSubmit: (entry) =>
-            FileServiceProvider.addFileEntry(entry).then((val) {
-          _refresh();
-        }),
+        onSubmit: (entry) => FileServiceProvider.updateFileEntry(entry).then(
+            (val) => _refresh().then((val) => Navigator.of(context).pop())),
       ),
     );
   }
 
   void _editEntry(FileEntry entry) {
+    BuildContext scaffoldContext = context;
     showDialog(
       context: context,
       builder: (context) => FileEntryDialog(
         initialData: entry,
         title: Text("编辑属性"),
         actionConfirm: "保存",
-        onSubmit: (entry) =>
-            FileServiceProvider.addFileEntry(entry).then((val) {
-          _refresh();
-        }),
+        onSubmit: (entry) => FileServiceProvider.updateFileEntry(entry).then(
+            (val) => _refresh().then((val) => Navigator.of(context).pop())),
         extension: Column(
           children: <Widget>[
             Padding(
@@ -85,14 +91,32 @@ class _LogSelectorState extends State<LogSelector> {
                       elevation: 1,
                       icon: Icon(Icons.delete),
                       label: Text("移除关注"),
-                      onPressed: () {
-                        FileServiceProvider.removeFileEntry(entry).then((val) {
+                      onPressed: () =>
+                          FileServiceProvider.removeFileEntry(entry).then(
+                        (val) {
                           _refresh();
                           Navigator.of(context).pop();
-                        });
-                      },
+                          Scaffold.of(scaffoldContext).removeCurrentSnackBar();
+                          Scaffold.of(scaffoldContext).showSnackBar(
+                            SnackBar(
+                              duration: Duration(seconds: 2),
+                              content: Text("已移除${entry.filename}"),
+                              action: SnackBarAction(
+                                label: "撤销",
+                                onPressed: () =>
+                                    FileServiceProvider.updateFileEntry(entry)
+                                        .then(
+                                  (val) => _refresh().then((val) =>
+                                      Scaffold.of(scaffoldContext)
+                                          .removeCurrentSnackBar()),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

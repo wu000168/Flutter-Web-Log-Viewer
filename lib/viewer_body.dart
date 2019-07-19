@@ -69,7 +69,6 @@ class _ViewerBodyState extends State<ViewerBody> {
     ThemeData themeData = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        leading: null,
         iconTheme: IconThemeData(color: themeData.textTheme.body1.color),
         backgroundColor: themeData.scaffoldBackgroundColor,
         title: Text(

@@ -8,7 +8,7 @@ class FileServiceProvider {
 
   static Future<List<FileEntry>> fetchFileEntryList() async {
     try {
-      Response response = await get(Uri.http(
+      Response response = await get(Uri.https(
           ServerInfo.host,
           ServerInfo.fileServicesPath,
           {ServerInfo.actionQueryKey: ServerInfo.actionFetchList}));
@@ -35,7 +35,7 @@ class FileServiceProvider {
   /// [filename] is the entry name in the config json file
   static Future<String> getFileContent(String filename) async {
     try {
-      Response response = await get(Uri.http(
+      Response response = await get(Uri.https(
           ServerInfo.host, ServerInfo.fileServicesPath, {
         ServerInfo.actionQueryKey: "get_content",
         ServerInfo.filenameQueryKey: filename
@@ -60,7 +60,7 @@ class FileServiceProvider {
   static Future<String> clearFile(String filename) async {
     try {
       Response response =
-          await get(Uri.http(ServerInfo.host, ServerInfo.fileServicesPath, {
+          await get(Uri.https(ServerInfo.host, ServerInfo.fileServicesPath, {
         ServerInfo.actionQueryKey: ServerInfo.actionClear,
         ServerInfo.filenameQueryKey: filename
       }));
@@ -80,13 +80,13 @@ class FileServiceProvider {
     }
   }
 
-  static Future<dynamic> addFileEntry(FileEntry fileEntry) async {
+  static Future<dynamic> updateFileEntry(FileEntry fileEntry) async {
     try {
       Response response = await post(
-        Uri.http(ServerInfo.host, ServerInfo.fileServicesPath, {
-          ServerInfo.actionQueryKey: ServerInfo.actionAddFileEntry,
+        Uri.https(ServerInfo.host, ServerInfo.fileServicesPath, {
+          ServerInfo.actionQueryKey: ServerInfo.actionUpdateFileEntry,
         }),
-        headers: {"HTTP/1.1": "200 OK", "Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json"},
         body: jsonEncode(fileEntry.toMap()),
       );
       switch (response.statusCode) {
@@ -108,10 +108,10 @@ class FileServiceProvider {
   static Future<dynamic> removeFileEntry(FileEntry fileEntry) async {
     try {
       Response response = await post(
-        Uri.http(ServerInfo.host, ServerInfo.fileServicesPath, {
+        Uri.https(ServerInfo.host, ServerInfo.fileServicesPath, {
           ServerInfo.actionQueryKey: ServerInfo.actionRemoveFileEntry,
         }),
-        headers: {"HTTP/1.1": "200 OK", "Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json"},
         body: jsonEncode(fileEntry.toMap()),
       );
       switch (response.statusCode) {

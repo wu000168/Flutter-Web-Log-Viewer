@@ -77,11 +77,12 @@ class FileEntryDialogState extends State<FileEntryDialog> {
               value: _canDelete,
               onChanged: (val) => setState(() => _canDelete = val),
             ),
-            CheckboxListTile(
-              title: Text("保留一次记录"),
-              value: _bakOnDelete,
-              onChanged: (val) => setState(() => _bakOnDelete = val),
-            ),
+            if (_canDelete)
+              CheckboxListTile(
+                title: Text("保留一次记录"),
+                value: _bakOnDelete,
+                onChanged: (val) => setState(() => _bakOnDelete = val),
+              ),
             if (widget.extension != null) widget.extension
           ],
         ),
@@ -101,7 +102,6 @@ class FileEntryDialogState extends State<FileEntryDialog> {
                 bakOnDelete: _bakOnDelete);
             if (_formKey.currentState.validate()) {
               widget.onSubmit(emit);
-              Navigator.of(context).pop();
             }
           },
         ),

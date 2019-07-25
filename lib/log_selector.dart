@@ -106,9 +106,10 @@ class _LogSelectorState extends State<LogSelector> {
                                 onPressed: () =>
                                     FileServiceProvider.updateFileEntry(entry)
                                         .then(
-                                  (val) => _refresh().then((val) =>
-                                      Scaffold.of(scaffoldContext)
-                                          .removeCurrentSnackBar()),
+                                  (val) => _refresh().then(
+                                    (val) => Scaffold.of(scaffoldContext)
+                                        .removeCurrentSnackBar(),
+                                  ),
                                 ),
                               ),
                             ),

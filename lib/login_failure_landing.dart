@@ -12,6 +12,7 @@ class LoginFailureLanding extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Icon(
               Icons.highlight_off,
@@ -21,7 +22,10 @@ class LoginFailureLanding extends StatelessWidget {
             if (message != null)
               FractionallySizedBox(
                 widthFactor: 0.5,
-                child: Text(message),
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                ),
               )
           ],
         ),

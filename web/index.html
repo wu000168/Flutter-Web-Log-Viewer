@@ -10,10 +10,7 @@
       agentid: "1000007",
       redirect_uri: "/log_viewer_main.html"
     };
-
-    var authUri =
-      "https://open.work.weixin.qq.com/wwopen/sso/qrConnect?" +
-      "appid=" +
+    var authUri = "", query = "appid=" +
       encodeURIComponent(wechatConfig.appid) +
       "&agentid=" +
       encodeURIComponent(wechatConfig.agentid) +
@@ -21,6 +18,11 @@
       encodeURIComponent(
         location.protocol + "//" + location.hostname + wechatConfig.redirect_uri
       );
+    if (navigator.userAgent.toLocaleLowerCase().indexOf('micromessenger') == -1) {
+      authUri = "https://open.work.weixin.qq.com/wwopen/sso/qrConnect?" + query;
+    } else {
+      authUri = "https://open.weixin.qq.com/connect/oauth2/authorize?response_type=code&scope=snsapi_base&" + query + "#wechat_redirect";
+    }
     location.href = authUri;
   </script>
 </head>

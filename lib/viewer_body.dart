@@ -85,7 +85,7 @@ class _ViewerBodyState extends State<ViewerBody> {
             padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: LogSelector(
               onChanged: (newFileSelected) =>
-                  _currentFile.value = _currentFile.value,
+                  _currentFile.value = newFileSelected,
             ),
           ),
         ),

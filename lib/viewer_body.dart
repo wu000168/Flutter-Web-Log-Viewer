@@ -20,11 +20,13 @@ class _ViewerBodyState extends State<ViewerBody> {
     _currentFile = ValueNotifier(null);
     _fileLoading = true;
     _currentFile.addListener(() {
-      FileServiceProvider.getFileContent(_currentFile.value.filename)
-          .then((content) {
-        setState(() => _fileContent = content);
-        _fileLoading = false;
-      });
+      if (_currentFile.value != null) {
+        FileServiceProvider.getFileContent(_currentFile.value.filename)
+            .then((content) {
+          setState(() => _fileContent = content);
+          _fileLoading = false;
+        });
+      }
       setState(() {
         if (_fileLoading) {
           // Cancel existing loading
@@ -83,7 +85,7 @@ class _ViewerBodyState extends State<ViewerBody> {
             padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: LogSelector(
               onChanged: (newFileSelected) =>
-                  _currentFile.value = newFileSelected,
+                  _currentFile.value = _currentFile.value,
             ),
           ),
         ),
@@ -91,14 +93,24 @@ class _ViewerBodyState extends State<ViewerBody> {
       body: _fileLoading
           ? Center(child: CircularProgressIndicator())
           : LongText(text: _fileContent),
-      floatingActionButton: _currentFile?.value?.canDelete ?? false
-          ? FloatingActionButton.extended(
+      floatingActionButton: ButtonBar(
+        children: <Widget>[
+          FloatingActionButton(
+            child: Icon(Icons.refresh),
+            onPressed: () {
+              _currentFile.value = null;
+              _currentFile.value = _currentFile.value;
+            },
+          ),
+          if (_currentFile?.value?.canDelete ?? false)
+            FloatingActionButton.extended(
               icon: Icon(Icons.delete_forever),
               label: Text("清空"),
               backgroundColor: Theme.of(context).errorColor,
               onPressed: _clearFile,
             )
-          : null,
+        ],
+      ),
     );
   }
 }

@@ -28,20 +28,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $content = file_get_contents($config[$filename]['path']);
             if ($content === false) file_not_found($filename);
             $encoding = mb_detect_encoding($content, 'UTF-8', true);
-            if ($encoding!='UTF-8') $content = utf8_encode($content);
+            if ($encoding != 'UTF-8') $content = utf8_encode($content);
             echo $content;
             break;
         case 'fetch_list':
-            if ($config == null) {
-                file_not_found('logs.json');
-                file_put_contents($logs_json, json_encode(array(
-                    'log.txt' =>
-                    array('path' => '/var/www/http/log.txt', 'bak_on_delete' => true)
-                )));
+            if ($config === null) {
+                if (!file_exists($logs_json)) {
+                    file_not_found($logs_json);
+                    file_put_contents($logs_json, json_encode(array(
+                        'log.txt' =>
+                        array('path' => '/var/www/http/log.txt', 'bak_on_delete' => true)
+                    )));
+                } else {
+                    $config = array();
+                }
             }
             header('HTTP/1.1 200 OK');
             header('Content-Type: application/json; charset=UTF-8');
-            echo json_encode($config);
+            echo json_encode($config, JSON_FORCE_OBJECT);
             break;
         case 'clear':
             $path = $config[$filename]['path'];
